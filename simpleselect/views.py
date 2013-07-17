@@ -27,6 +27,7 @@ class JSONResponse(django.http.HttpResponse):
         super(JSONResponse, self).__init__(json_content, 'application/json',
                                            status, reason)
 
+
 def create_queries(terms, queries, query_factory):
     """Make a sequence of query objects out of terms and query strings.
 

@@ -65,8 +65,9 @@ class QueryTest(unittest.TestCase):
         self.datasource = mock.MagicMock()
         self.joiner = mock.MagicMock()
 
-        self.result = views.query(self.datasource, [], [], self.Q,
-                                  self.applier, self.joiner)
+        self.result = views.query(self.datasource, ['sample_term'],
+                                  ['sample_query'], self.Q, self.applier,
+                                  self.joiner)
 
     def test_query_joiner_used(self):
         """All independent query objects are joined by query_joiner."""
@@ -79,3 +80,8 @@ class QueryTest(unittest.TestCase):
     def test_filter_gets_joined_query_objects(self):
         """filter_func is given the result of query_factory_joiner."""
         self.datasource.assert_called_with(self.joiner.return_value)
+
+    def test_factory_applier_used(self):
+        """query_factory_applier is given the appropriate arguments"""
+        self.applier.assert_called_with(['sample_term'], ['sample_query'],
+                                        self.Q)
