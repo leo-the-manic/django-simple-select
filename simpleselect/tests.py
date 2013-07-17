@@ -50,15 +50,28 @@ class CreateQueriesTest(unittest.TestCase):
 class QueryTest(unittest.TestCase):
     """Tests for the query() function."""
 
+    def setUp(self):
+        """Mock a call to query(), and all dependcies.
+
+        Creates mock objects and stores them in self.datasource, self.applier,
+        self.joiner, and self.Q.
+
+        These correspond to filter_func, query_factory_applier, query_joiner,
+        and query_factory.
+
+        """
+        self.Q = mock.MagicMock()
+        self.applier = mock.MagicMock()
+        self.datasource = mock.MagicMock()
+        self.joiner = mock.MagicMock()
+
+        self.result = views.query(self.datasource, [], [], self.Q,
+                                  self.applier, self.joiner)
+
     def test_query_joiner_used(self):
         """All independent query objects are joined by query_joiner."""
-        datasource = mock.MagicMock()
-        applier = mock.MagicMock()
-        joiner = mock.MagicMock()
-        Q = mock.MagicMock()
+        self.joiner.assert_called_with(self.applier.return_value)
 
-        views.query(datasource, ['Joe'], ['name__contains'], Q, applier,
-                    joiner)
-        pos_args = joiner.call_args[0]
-        queryseq = pos_args[0]
-        self.assertEquals(queryseq, applier.return_value)
+    def test_returns_filter_func(self):
+        """The value returned from the function is from filter_func."""
+        self.assertEquals(self.result, self.datasource.return_value)
