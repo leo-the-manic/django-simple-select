@@ -78,12 +78,12 @@ def query(filter_func, terms, queries, query_factory, query_factory_applier,
 
     :param query_joiner: A callable which takes a sequence of query objects
                          returned from ``query_factory``, and produces a
-                         sequence of args to be given to a ``filter_func``
+                         single query object to be given to a ``filter_func``
 
     """
     query_objects = query_factory_applier(terms, queries, query_factory)
-    query_joiner(query_objects)
-    return filter_func()
+    final_query = query_joiner(query_objects)
+    return filter_func(final_query)
 
 
 def autocomplete_filter(request):
