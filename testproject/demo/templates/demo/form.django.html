@@ -12,6 +12,24 @@
         <script language="javascript"
             src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
+        <script language="javascript">
+
+            function split(val) {
+              return val.split( /,\s*/ );
+            }
+
+            function extractLast(term) {
+              return split(term).pop();
+            }
+
+            $(function() {
+
+                $("#companyname").autocomplete({
+                    source: ["Macrohard", "Microsoft"],
+                });
+            });
+        </script>
+
         <style type="text/css">
             body {
                 font-family: sans-serif;
@@ -24,7 +42,11 @@
         <h1>Add a Person</h1>
         <form action="{% url "demo_main" %}" method="POST">{% csrf_token %}
             {{ form.as_p }}
-            <input type="submit">
+            <p>
+                Company, take two:
+                <input id="companyname">
+                <input id="companyid" type="hidden">
+            </p>
         </form>
     </body>
 </html>
