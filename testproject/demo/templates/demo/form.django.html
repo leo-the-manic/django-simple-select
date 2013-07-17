@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add a Person</title>
+
+        <style type="text/css">
+            body {
+                font-family: sans-serif;
+                font-size: 10pt;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Add a Person</h1>
+        <form action="{% url "demo_main" %}" method="POST">{% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit">
+        </form>
+    </body>
+</html>
