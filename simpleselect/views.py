@@ -1,6 +1,7 @@
 # Create your views here.
 import json
 
+import django.db.models
 import django.http
 
 
@@ -26,6 +27,31 @@ class JSONResponse(django.http.HttpResponse):
         json_content = json_service(content)
         super(JSONResponse, self).__init__(json_content, 'application/json',
                                            status, reason)
+
+
+def or_together(queries, empty_val=django.db.models.Q()):
+    """Join the given queries together by ORing.
+
+    This means::
+
+        or_together(Q(foo='bar'), Q(fizz='buzz'))
+
+    is identical to::
+
+        Q(foo='bar') | Q(fizz='buzz')
+
+
+    :type  queries: seq of Query object
+    :param queries: Isolated Query objects (e.g. Django `Q objects`_)
+
+    :type  empty_val: Query object
+    :param empty_val: An empty query safe for OR-ing with anything without
+                      changing the meaning of the query. E.g. ``Q()``
+
+    :return: A single Query that is all ``queries`` OR'd together.
+
+    """
+    return reduce(lambda a, b: a | b, queries, empty_val)
 
 
 def create_queries(terms, queries, query_factory):

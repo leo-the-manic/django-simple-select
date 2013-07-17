@@ -47,6 +47,23 @@ class CreateQueriesTest(unittest.TestCase):
                              Q)
 
 
+class OrTogetherTest(unittest.TestCase):
+    """Tests for the or_together() function."""
+
+    def test_single_query_goes_to_empty(self):
+        """or_together()'ing one thing pairs with the empty value."""
+        empty = mock.MagicMock()
+        q1 = mock.MagicMock()
+        self.assertEquals(views.or_together((q1,), empty), empty | q1)
+
+    def test_multiple_queries_combined(self):
+        """or_goether()'ing two things pairs both with the empty value."""
+        empty = mock.MagicMock()
+        q1, q2 = mock.MagicMock(), mock.MagicMock()
+        self.assertEquals(views.or_together((q1, q2), empty),
+                          empty | q1 | q2)
+
+
 class QueryTest(unittest.TestCase):
     """Tests for the query() function."""
 
