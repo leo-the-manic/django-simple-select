@@ -26,18 +26,39 @@ class JSONResponseTest(unittest.TestCase):
         self.assertEquals(resp.content, 'buzz')
 
 
-class QueryTest(unittest.TestCase):
-    """Tests for the query() function."""
+class CreateQueriesTest(unittest.TestCase):
+    """Tests for the create_queries function."""
 
     def test_basic_query_constructor_call(self):
-        """The query constructor is given a filter and a terms."""
-        datasource = mock.MagicMock()
-        joiner = mock.MagicMock()
-
+        """The query constructor is given the query and a term."""
         Q = mock.MagicMock()
-        views.query(datasource, ['Joe'], ['name__icontains'], Q, joiner)
+        views.create_queries(['Joe'], ['name__icontains'], Q)
         Q.assert_called_with(name__icontains='Joe')
 
         Q = mock.MagicMock()
-        views.query(datasource, ['Ma'], ['address__contains'], Q, joiner)
+        views.create_queries(['Ma'], ['address__contains'], Q)
         Q.assert_called_with(address__contains='Ma')
+
+    def test_multiple_queries_get_terms(self):
+        """Each query gets called with a term."""
+        Q = mock.MagicMock()
+        views.create_queries(['Joe'],
+                             ['first_name__icontains', 'last_name__icontains'],
+                             Q)
+
+
+class QueryTest(unittest.TestCase):
+    """Tests for the query() function."""
+
+    def test_query_joiner_used(self):
+        """All independent query objects are joined by query_joiner."""
+        datasource = mock.MagicMock()
+        applier = mock.MagicMock()
+        joiner = mock.MagicMock()
+        Q = mock.MagicMock()
+
+        views.query(datasource, ['Joe'], ['name__contains'], Q, applier,
+                    joiner)
+        pos_args = joiner.call_args[0]
+        queryseq = pos_args[0]
+        self.assertEquals(queryseq, applier.return_value)
