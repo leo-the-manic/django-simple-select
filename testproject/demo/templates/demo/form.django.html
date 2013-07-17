@@ -60,8 +60,7 @@
             $(function() {
 
                 $("#companyid_text").autocomplete({
-                    source: [{pk: 1, label: "Macrohard"},
-                             {pk: 2, label: "Microsoft"}],
+                    source: '{% url "simpleselect" %}',
 
                     // the 'select' event triggers when the user has chosen
                     // an autocomplete suggestion
