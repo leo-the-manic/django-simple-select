@@ -118,7 +118,8 @@ def query(filter_func, terms, queries, query_factory, query_factory_applier,
     :param query_factory_applier: A callable which takes a list of terms, a
                                   list of filters, and ``query_factory``, and
                                   returns a sequence of objects produced by
-                                  ``query_factory``.
+                                  ``query_factory``. :py:func:`create_queries`
+                                  is a provided applier you can use.
 
     :param query_joiner: A callable which takes a sequence of query objects
                          returned from ``query_factory``, and produces a
@@ -132,6 +133,9 @@ def query(filter_func, terms, queries, query_factory, query_factory_applier,
 
 def autocomplete_filter(request):
     from demo import models
-    companies = [{'pk': c.pk, 'label': c.name} for c in
-                 models.Company.objects.all()]
+    objects = query(models.Company.objects.filter,
+                    [request.GET.get('term')],
+                    ['name__icontains'], django.db.models.Q,
+                    create_queries, or_together)
+    companies = [{'pk': c.pk, 'label': c.name} for c in objects]
     return JSONResponse(companies)
