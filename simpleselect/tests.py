@@ -24,3 +24,20 @@ class JSONResponseTest(unittest.TestCase):
         resp = views.JSONResponse(content='fizz', json_service=json)
         json.assert_called_with('fizz')
         self.assertEquals(resp.content, 'buzz')
+
+
+class QueryTest(unittest.TestCase):
+    """Tests for the query() function."""
+
+    def test_basic_query_constructor_call(self):
+        """The query constructor is given a filter and a terms."""
+        datasource = mock.MagicMock()
+        joiner = mock.MagicMock()
+
+        Q = mock.MagicMock()
+        views.query(datasource, ['Joe'], ['name__icontains'], Q, joiner)
+        Q.assert_called_with(name__icontains='Joe')
+
+        Q = mock.MagicMock()
+        views.query(datasource, ['Ma'], ['address__contains'], Q, joiner)
+        Q.assert_called_with(address__contains='Ma')
