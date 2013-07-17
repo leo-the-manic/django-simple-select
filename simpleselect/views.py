@@ -83,6 +83,7 @@ def query(filter_func, terms, queries, query_factory, query_factory_applier,
     """
     query_objects = query_factory_applier(terms, queries, query_factory)
     query_joiner(query_objects)
+    return filter_func()
 
 
 def autocomplete_filter(request):
