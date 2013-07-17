@@ -75,3 +75,7 @@ class QueryTest(unittest.TestCase):
     def test_returns_filter_func(self):
         """The value returned from the function is from filter_func."""
         self.assertEquals(self.result, self.datasource.return_value)
+
+    def test_filter_gets_joined_query_objects(self):
+        """filter_func is given the result of query_factory_joiner."""
+        self.datasource.assert_called_with(self.joiner.return_value)
