@@ -9,22 +9,23 @@ class JSONResponse(django.http.HttpResponse):
     """An HTTP response with a 'content-type: application/json' header"""
 
     def __init__(self, content='', status=200, reason=None,
-                 json_service=json.dumps):
-        """Create a JSONResponse by converting the content to JSON.
+                 json_converter=json.dumps):
+        """Create a JSONResponse by converting the given content to JSON.
 
-        :param content: The Python object to convert to JSON and return.
+        :type  content: Python object
+        :param content: The response body, which gets converted to JSON.
 
-        :param json_service: A callable which takes a Python object and returns
-                             a JSON string. By default, this is the
-                             ``json.dumps`` function of the Python standard
-                             library.
+        :type  json_converter: callable
+        :param json_converter: A Python->JSON converter. By default, this is
+                               the ``json.dumps`` function of the Python
+                               standard library.
 
         For all other parameters, see the `official Django documentation`_.
 
         .. _official Django documentation: https://docs.djangoproject.com/en/dev/ref/request-response/#django.http.HttpResponse.__init__
 
         """
-        json_content = json_service(content)
+        json_content = json_converter(content)
         super(JSONResponse, self).__init__(json_content, 'application/json',
                                            status, reason)
 
@@ -71,12 +72,12 @@ def create_queries(terms, queries, query_factory):
     :return: A sequence of query objects.
 
     >>> from django.db.models import Q
+    >>> queries_are_equal = lambda a, b: a.children == b.children
+    >>>
     >>> a = create_queries(['Joe'], ['name__contains'], Q)
     >>> b = Q(name__contains='Joe')
-    >>> a[0].children == b.children
+    >>> queries_are_equal(a[0], b)
     True
-    >>> # unfortunately == isn't defined for Q objects; this was the best I
-    >>> # could do. But a[0] == b
 
     """
     # temporary implementation

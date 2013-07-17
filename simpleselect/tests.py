@@ -16,12 +16,12 @@ class JSONResponseTest(unittest.TestCase):
     def test_converts_to_json(self):
         """JSON responses convert their content to JSON."""
         json = mock.MagicMock(return_value='bar')
-        resp = views.JSONResponse(content='foo', json_service=json)
+        resp = views.JSONResponse(content='foo', json_converter=json)
         json.assert_called_with('foo')
         self.assertEquals(resp.content, 'bar')
 
         json = mock.MagicMock(return_value='buzz')
-        resp = views.JSONResponse(content='fizz', json_service=json)
+        resp = views.JSONResponse(content='fizz', json_converter=json)
         json.assert_called_with('fizz')
         self.assertEquals(resp.content, 'buzz')
 
