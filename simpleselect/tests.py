@@ -46,17 +46,30 @@ class CreateQueriesTest(unittest.TestCase):
         queries = views.create_queries(['Ma'], ['address__contains'], Q)
         self.assertEquals(tuple(queries)[0], Q(address__contains='Ma'))
 
-    def test_multiple_queries_get_terms(self):
-        """Each query gets called with a term."""
+    def test_terms_sent_to_all(self):
+        """A term is sent to all queries."""
         Q = mock.MagicMock()
 
         # generators are lazy; tuple() is used to force it to make all objects
-        tuple(views.create_queries(['Joe'], ['first_name__icontains',
-                                             'last_name__icontains'], Q))
+        result = tuple(views.create_queries(['Joe'], ['first_name__icontains',
+                                                      'last_name__icontains'],
+                                            Q))
 
         expected = [mock.call(first_name__icontains='Joe'),
                     mock.call(last_name__icontains='Joe')]
         self.assertEquals(expected, Q.call_args_list)
+        self.assertEquals(len(result), 2)
+
+    def test_all_terms_sent(self):
+        """All terms are sent to each query."""
+        Q = mock.MagicMock()
+
+        # generators are lazy; tuple() is used to force all objects to be made
+        result = tuple(views.create_queries(['John', 'Smith'], ['a__is'], Q))
+        expected = [mock.call(a__is='John'), mock.call(a__is='Smith')]
+        self.assertEquals(expected, Q.call_args_list)
+        self.assertEquals(len(result), 2)
+
 
 
 class OrTogetherTest(unittest.TestCase):

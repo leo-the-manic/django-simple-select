@@ -1,4 +1,5 @@
 # Create your views here.
+import itertools
 import json
 
 import django.db.models
@@ -58,6 +59,20 @@ def or_together(queries, empty_val=django.db.models.Q()):
 def create_queries(terms, queries, query_factory):
     """Make a sequence of query objects out of terms and query strings.
 
+    This does a "cartesian product"; in other words, this call::
+
+        tuple(create_queries(['John', 'Smith'],
+                             ['first_name__icontains, last_name__icontains'],
+                             Q))
+
+    will be logically equivalent to this::
+
+        (Q(first_name__icontains='John'), Q(first_name__icontains='Smith'),
+         Q(last_name__icontains='John'), Q(last_name__icontains='Smith'))
+
+    .. note:: The *ordering* is not guaranteed, but the elements of both tuples
+              will be equivalent.
+
     :type  terms: seq of str
     :param terms: Search terms to query with, e.g. ["John", "Smith"]
 
@@ -81,9 +96,8 @@ def create_queries(terms, queries, query_factory):
     True
 
     """
-    # temporary implementation
-    for q in queries:
-        kwargs = {q: terms[0]}
+    for term, query in itertools.product(terms, queries):
+        kwargs = {query: term}
         yield query_factory(**kwargs)
 
 
