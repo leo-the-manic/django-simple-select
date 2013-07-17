@@ -69,20 +69,22 @@ def create_queries(terms, queries, query_factory):
                           `Q object`_ constructor. In most cases you will
                           simply use ``django.db.models.Q`` here.
 
-    :return: A sequence of query objects.
+    :return: A generator which yields query objects.
 
     >>> from django.db.models import Q
     >>> queries_are_equal = lambda a, b: a.children == b.children
     >>>
-    >>> a = create_queries(['Joe'], ['name__contains'], Q)
+    >>> queries = create_queries(['Joe'], ['name__contains'], Q)
+    >>> a = tuple(queries)[0]
     >>> b = Q(name__contains='Joe')
-    >>> queries_are_equal(a[0], b)
+    >>> queries_are_equal(a, b)
     True
 
     """
     # temporary implementation
-    kwargs = {queries[0]: terms[0]}
-    return (query_factory(**kwargs),)
+    for q in queries:
+        kwargs = {q: terms[0]}
+        yield query_factory(**kwargs)
 
 
 def query(filter_func, terms, queries, query_factory, query_factory_applier,

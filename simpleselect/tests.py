@@ -27,24 +27,36 @@ class JSONResponseTest(unittest.TestCase):
 
 
 class CreateQueriesTest(unittest.TestCase):
-    """Tests for the create_queries function."""
+    """Tests for the create_queries function.
+
+    .. note:: Many of these tests use assertEquals. This is because these are
+              MagicMock objects. Django Q objects do *NOT* have a well-defined
+              __eq__ method, so if these were integration tests, they would
+              all fail (even if the method logic was correct).
+
+    """
 
     def test_basic_query_constructor_call(self):
         """The query constructor is given the query and a term."""
         Q = mock.MagicMock()
-        views.create_queries(['Joe'], ['name__icontains'], Q)
-        Q.assert_called_with(name__icontains='Joe')
+        queries = views.create_queries(['Joe'], ['name__icontains'], Q)
+        self.assertEquals(tuple(queries)[0], Q(name__icontains='Joe'))
 
         Q = mock.MagicMock()
-        views.create_queries(['Ma'], ['address__contains'], Q)
-        Q.assert_called_with(address__contains='Ma')
+        queries = views.create_queries(['Ma'], ['address__contains'], Q)
+        self.assertEquals(tuple(queries)[0], Q(address__contains='Ma'))
 
     def test_multiple_queries_get_terms(self):
         """Each query gets called with a term."""
         Q = mock.MagicMock()
-        views.create_queries(['Joe'],
-                             ['first_name__icontains', 'last_name__icontains'],
-                             Q)
+
+        # generators are lazy; tuple() is used to force it to make all objects
+        tuple(views.create_queries(['Joe'], ['first_name__icontains',
+                                             'last_name__icontains'], Q))
+
+        expected = [mock.call(first_name__icontains='Joe'),
+                    mock.call(last_name__icontains='Joe')]
+        self.assertEquals(expected, Q.call_args_list)
 
 
 class OrTogetherTest(unittest.TestCase):
