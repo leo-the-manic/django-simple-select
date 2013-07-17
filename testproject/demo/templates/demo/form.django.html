@@ -14,20 +14,68 @@
 
         <script language="javascript">
 
-            function split(val) {
-              return val.split( /,\s*/ );
+
+            /**
+             * Get the <input hidden> for the textbox with the given ID.
+             *
+             * textboxID should be a string.
+             *
+             * returns a DOM element
+             */
+            function simpleselect_getHiddenInput(textboxID) {
+                // if you have a field foo, the textbox gets the id "foo_text"
+                var textboxTagRegex = /_text$/;
+                var fieldID = textboxID.replace(textboxTagRegex, '');
+                return $("#" + fieldID).get(0);
             }
 
-            function extractLast(term) {
-              return split(term).pop();
+
+            /**
+             * Set the <input type="hidden"> to match the user's selection
+             *
+             * This is called after the user has chosen an autocomplete
+             * suggestion.
+             *
+             * Args: see http://api.jqueryui.com/autocomplete/#event-select
+             *   for full detail.
+             *
+             * `this` is the <input type="text"> which the user uses to enter
+             *    their filter terms and select an option.
+             *
+             * `ui.item` is an JavaScript object, with `label` and `value`,
+             *    and `pk` attributes, representing what the user selected.
+             *    This is pulled from a remote JSON call.
+             *
+             *    The `value` is *not* used as the <input hidden> value
+             *    because jQueryUI autocomplete attemps to rewrite the textbox
+             *    with `value` if it is set. Instead a `pk` value is set, which
+             *    jQueryUI ignores.
+             */
+            function simpleselect_updateHiddenValue(event, ui) {
+                var $hidden = $(simpleselect_getHiddenInput(this.id));
+                $hidden.val(ui.item.pk).trigger('change')
             }
+
 
             $(function() {
 
-                $("#companyname").autocomplete({
-                    source: ["Macrohard", "Microsoft"],
+                $("#companyid_text").autocomplete({
+                    source: [{pk: 1, label: "Macrohard"},
+                             {pk: 2, label: "Microsoft"}],
+
+                    // the 'select' event triggers when the user has chosen
+                    // an autocomplete suggestion
+                    select: simpleselect_updateHiddenValue
+                });
+
+                // debug info; show the <input hidden> was changed
+                $("#companyid").change(function() {
+                    alert(this + " (" + this.id + ") value is " +
+                          $(this).val());
                 });
             });
+
+
         </script>
 
         <style type="text/css">
@@ -44,7 +92,7 @@
             {{ form.as_p }}
             <p>
                 Company, take two:
-                <input id="companyname">
+                <input id="companyid_text">
                 <input id="companyid" type="hidden">
             </p>
         </form>
