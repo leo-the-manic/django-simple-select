@@ -111,8 +111,6 @@ class AutocompleteSelect(django.forms.Widget):
         if attrs is None:
             attrs = {}
         input = django.forms.HiddenInput()
-        msg = mark_safe("Queryset: <code>{}</code>".format(
-            django.utils.html.escape(repr(self.choices.queryset))))
         input_class = attrs.get('class', '') + " simpleselect"
         attrs['class'] = input_class
 
@@ -120,4 +118,4 @@ class AutocompleteSelect(django.forms.Widget):
         url = self.js_url_maker(self)
         js = self.js_generator(input_id="id_{}".format(name), url=url)
 
-        return msg + input.render(name, value, attrs) + mark_safe(js)
+        return input.render(name, value, attrs) + mark_safe(js)
