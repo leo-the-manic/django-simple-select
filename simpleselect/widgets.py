@@ -20,5 +20,9 @@ class AutocompleteSelect(django.forms.Widget):
         registry[self.token] = self
 
     def render(self, name, value, attrs=None):
-        return mark_safe("Queryset: <code>{}</code>".format(
+        input = django.forms.HiddenInput()
+        msg = mark_safe("Queryset: <code>{}</code>".format(
             django.utils.html.escape(repr(self.choices.queryset))))
+        input_class = attrs.get('class', '') + " simpleselect"
+        attrs['class'] = input_class
+        return msg + input.render(name, value, attrs)

@@ -59,7 +59,14 @@
 
             $(function() {
 
-                $("#companyid_text").autocomplete({
+                // add <input>'s to simpleselect fields
+                $(".simpleselect").each(function() {
+                    var textfieldID = $(this).attr('id') + '_text'
+                    $(this).after('<input type="text" id="' + textfieldID
+                                  + '" class="simpleselect-search">')
+                });
+
+                $(".simpleselect-search").autocomplete({
                     source: '{% url "simpleselect" %}',
 
                     // the 'select' event triggers when the user has chosen
@@ -68,7 +75,7 @@
                 });
 
                 // debug info; show the <input hidden> was changed
-                $("#companyid").change(function() {
+                $(".simpleselect").change(function() {
                     alert(this + " (" + this.id + ") value is " +
                           $(this).val());
                 });
@@ -91,8 +98,7 @@
             {{ form.as_p }}
             <p>
                 Company, take two:
-                <input id="companyid_text">
-                <input id="companyid" type="hidden">
+                <input class="simpleselect" id="companyid" type="hidden">
             </p>
         </form>
     </body>
