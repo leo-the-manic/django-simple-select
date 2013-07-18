@@ -2,6 +2,7 @@
 import uuid
 import string
 
+import django.core.urlresolvers
 import django.forms
 import django.utils.html
 from django.utils.safestring import mark_safe
@@ -23,6 +24,32 @@ ACTIVATE_SCRIPT = string.Template('''
 ''')
 
 
+def get_json_url_for_widget(widget_instance,
+                            urllookup=django.core.urlresolvers.reverse):
+    """Get a URL that can provide autocomplete suggestions for the widget.
+
+    :type  widget: AutocompleteSelect instance
+    :param widget: The widget to provide autocompletion for
+
+    :type  urllookup: callable
+    :param urllookup:
+        A function to search the URLconf with.
+        ``django.core.urlresolvers.revrse`` should be sufficient. Will be
+        called with the string "simpleselect".
+
+    :rtype: str
+    :returns:
+        A string like::
+
+            http://example.com/?field=ABCDEF
+
+        where ABCDEF is ``widget_instance.token``.
+
+    """
+    return "{}?field={}".format(urllookup('simpleselect'),
+                                widget_instance.token)
+
+
 class AutocompleteSelect(django.forms.Widget):
     """TODO write docstring.
 
@@ -32,7 +59,8 @@ class AutocompleteSelect(django.forms.Widget):
     """
 
     def __init__(self, queries, attrs=None, registry=None,
-                 token_generator=(lambda self: uuid.uuid4),
+                 token_generator=(lambda self: uuid.uuid4()),
+                 json_url_maker=get_json_url_for_widget,
                  js_initialization_template=ACTIVATE_SCRIPT.substitute):
         """Create a new autocompleting select widget.
 
@@ -62,6 +90,12 @@ class AutocompleteSelect(django.forms.Widget):
 
             It should produce a string (which will be marked safe).
 
+
+        :param json_url_maker:
+            A callable that is given the widget instance and should return a
+            string which jQueryUI Autocomplete can use to fetch autocomplete
+            suggestions.
+
         """
         super(AutocompleteSelect, self).__init__(attrs=attrs)
         self.token = token_generator(self)
@@ -69,6 +103,7 @@ class AutocompleteSelect(django.forms.Widget):
             registry = REGISTRY
         registry[self.token] = self
         self.js_generator = js_initialization_template
+        self.js_url_maker = json_url_maker
 
     def render(self, name, value, attrs=None):
         if attrs is None:
@@ -80,8 +115,7 @@ class AutocompleteSelect(django.forms.Widget):
         attrs['class'] = input_class
 
         # TODO: extract id_{}
-        # TODO: extract urlgen
-        js = self.js_generator(input_id="id_{}".format(name),
-                               url='/simpleselectquery/?foo=bar')
+        url = self.js_url_maker(self)
+        js = self.js_generator(input_id="id_{}".format(name), url=url)
 
         return msg + input.render(name, value, attrs) + mark_safe(js)
