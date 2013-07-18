@@ -1,7 +1,14 @@
 from django import forms
-import simpleselect.widgets
+import simpleselect
 
 from . import models
+
+
+class AddEmployeeForm(forms.Form):
+    """Really just a farce that lets me play with a different field."""
+
+    person = forms.ModelChoiceField(models.Person.objects.all(),
+                                    widget=simpleselect.AutocompleteSelect([]))
 
 
 class PersonForm(forms.ModelForm):

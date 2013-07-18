@@ -93,13 +93,15 @@
     </head>
 
     <body>
-        <h1>Add a Person</h1>
-        <form action="{% url "demo_main" %}" method="POST">{% csrf_token %}
+        <h1>Test forms</h1>
+        <p>None of these forms submit, they just have autocomplete fields.</p>
+        <h2>Add a new Person</h1>
+        <form>
             {{ form.as_p }}
-            <p>
-                Company, take two:
-                <input class="simpleselect" id="companyid" type="hidden">
-            </p>
+        </form>
+        <h2>Add something that has a Person field</h2>
+        <form>
+            {{ form2.as_p }}
         </form>
     </body>
 </html>
