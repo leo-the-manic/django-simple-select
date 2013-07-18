@@ -36,13 +36,16 @@ class JSONResponse(django.http.HttpResponse):
 def and_together(queries):
     """Join the given queries by ANDing.
 
-    If ``queries`` is empty, this returns None.
+    :type  queries: iterable
+    :param queries: All involved Query objects.
+
+    If ``queries`` is empty, this will raise a TypeError.
 
     """
     return reduce(lambda a, b: a & b, queries)
 
 
-def or_together(queries, empty_val=django.db.models.Q()):
+def or_together(queries):
     """Join the given queries together by ORing.
 
     This means::
@@ -57,14 +60,12 @@ def or_together(queries, empty_val=django.db.models.Q()):
     :type  queries: seq of Query object
     :param queries: Isolated Query objects (e.g. Django `Q objects`_)
 
-    :type  empty_val: Query object
-    :param empty_val: An empty query safe for OR-ing with anything without
-                      changing the meaning of the query. E.g. ``Q()``
-
     :return: A single Query that is all ``queries`` OR'd together.
 
+    .. note:: if queries is empty, this will raise a TypeError
+
     """
-    return reduce(lambda a, b: a | b, queries, empty_val)
+    return reduce(lambda a, b: a | b, queries)
 
 
 def create_queries(terms, queries, query_factory):
@@ -110,9 +111,10 @@ def create_queries(terms, queries, query_factory):
     True
 
     """
-    for term, query in itertools.product(terms, queries):
-        kwargs = {query: term}
-        yield query_factory(**kwargs)
+    Q = query_factory
+    for term in terms:
+        term_on_all_queries = (Q(**{query: term}) for query in queries)
+        yield or_together(term_on_all_queries)
 
 
 def query(filter_func, terms, queries, query_factory, query_factory_applier,
