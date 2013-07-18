@@ -157,5 +157,5 @@ def autocomplete_filter(request):
                     django.db.models.Q,
                     create_queries,
                     and_together)
-    companies = [{'pk': c.pk, 'label': c.name} for c in objects]
+    companies = [{'pk': o.pk, 'label': unicode(o)} for o in objects]
     return JSONResponse(companies)
