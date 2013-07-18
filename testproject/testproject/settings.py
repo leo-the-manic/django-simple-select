@@ -123,6 +123,7 @@ INSTALLED_APPS = (
     'django_nose',  # unit testing library
 
     'demo',
+    'simpleselect',
 
 )
 

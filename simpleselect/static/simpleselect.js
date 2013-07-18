@@ -49,6 +49,34 @@ window.simpleselect_defaultAutocompleteArgs = {
 
 
 /**
+ * Set the text of the entry box that's associated with the given hidden field.
+ */
+window.simpleselect_setText = function(hiddenID, text) {
+    var $textbox = $("#" + hiddenID + "_text");
+    $textbox.val(text);
+}
+
+
+/**
+ * Listen to hidden events on the input and activate the text accordingly.
+ */
+window.simpleselect_updateOnChange = function(hiddenID, url) {
+    $("#"+hiddenID).change(function() {
+        var glue = url.indexOf("&") >= 0 ? "?" : "&";
+        var newID = $(this).val();
+        var requestURL = url + glue + "id=" + newID;
+        $.getJSON(url, null, function(data, textStatus) {
+            if(textStatus == "success") {
+                simpleselect_setText(hiddenID, "Success");
+            } else {
+                simpleselect_setText(hiddenID, textStatus);
+            }
+        });
+    });
+}
+
+
+/**
  * Inject an autcompleting textbox next to an <input hidden>
  *
  * This is meant to be called by JS code that is put in the
@@ -67,6 +95,7 @@ window.simpleselect_activateWidget = function(hiddenID, url) {
     var args = $.extend({ source: url },
                         window.simpleselect_defaultAutocompleteArgs);
     $textfield.autocomplete(args);
+    window.simpleselect_updateOnChange(hiddenID);
 }
 
 
