@@ -9,8 +9,7 @@ class AddEmployeeForm(forms.Form):
 
     person = forms.ModelChoiceField(models.Person.objects.all(),
                                     widget=simpleselect.AutocompleteSelect(
-                                        ['first_name__icontains',
-                                         'last_name__icontains']))
+                                        ['first_name__icontains']))
 
 
 class PersonForm(forms.ModelForm):
