@@ -71,7 +71,6 @@ class CreateQueriesTest(unittest.TestCase):
         self.assertEquals(len(result), 2)
 
 
-
 class OrTogetherTest(unittest.TestCase):
     """Tests for the or_together() function."""
 
@@ -87,6 +86,21 @@ class OrTogetherTest(unittest.TestCase):
         q1, q2 = mock.MagicMock(), mock.MagicMock()
         self.assertEquals(views.or_together((q1, q2), empty),
                           empty | q1 | q2)
+
+
+class AndTogetherTest(unittest.TestCase):
+    """Tests for the and_together() function."""
+
+    def test_single_query_gets_returned(self):
+        """and_together()'ing a single query returns that query."""
+        q1 = mock.MagicMock()
+        self.assertIs(views.and_together((q1,)), q1)
+
+    def test_multiple_queries_anded_together(self):
+        """and_together() on many queries uses the & operator to combine."""
+        q1 = mock.MagicMock()
+        q2 = mock.MagicMock()
+        self.assertEquals(views.and_together((q1, q2)), q1 & q2)
 
 
 class QueryTest(unittest.TestCase):
