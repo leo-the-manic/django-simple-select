@@ -2,7 +2,7 @@ import unittest
 
 import mock
 
-from . import views
+from .. import views
 
 
 class JSONResponseTest(unittest.TestCase):
