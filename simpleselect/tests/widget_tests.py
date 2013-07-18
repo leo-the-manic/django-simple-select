@@ -28,3 +28,32 @@ class AutocompleteSelectTest(unittest.TestCase):
         with mock.patch.object(w, 'choices', create=True) as choices:
             choices.queryset = {}
             self.assertIn(test_payload, w.render('a', 'b'))
+
+    def test_render_gets_url_from_generator(self):
+        """The JS renderer is called with a URL sent from a URL generator."""
+
+        def js_template(input_id, url):
+            self.assertEquals(url, "foo")
+
+        def url_gen(widget):
+            return 'foo'
+
+        w = widgets.AutocompleteSelect(None,
+                                       js_initialization_template=js_template,
+                                       json_url_maker=url_gen)
+        with mock.patch.object(w, 'choices', create=True) as choices:
+            choices.queryset = {}
+            w.render('a', 'b')
+
+
+class UrlGeneratorTest(unittest.TestCase):
+    """Tests for the get_json_url_for_widget() function."""
+
+    def test_uses_token_as_getparam(self):
+        """The widget's URL contains the widget's token."""
+        lookup = lambda s: "foo"
+        w = mock.MagicMock()
+        w.token = 'bar'
+
+        result = widgets.get_json_url_for_widget(w, lookup)
+        self.assertIn(result, "foo?field=bar")
