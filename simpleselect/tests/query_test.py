@@ -38,6 +38,9 @@ class CreateQueriesTest(unittest.TestCase):
 
     def test_basic_query_constructor_call(self):
         """The query constructor is given the query and a term."""
+
+        # TODO: these tests are misleading, testing equality to Q doesn't work
+        # right and is always true because of the way mock.MagicMock works
         Q = mock.MagicMock()
         queries = views.create_queries(['Joe'], ['name__icontains'], Q)
         self.assertEquals(tuple(queries)[0], Q(name__icontains='Joe'))
@@ -46,29 +49,8 @@ class CreateQueriesTest(unittest.TestCase):
         queries = views.create_queries(['Ma'], ['address__contains'], Q)
         self.assertEquals(tuple(queries)[0], Q(address__contains='Ma'))
 
-    def test_terms_sent_to_all(self):
-        """A term is sent to all queries."""
-        Q = mock.MagicMock()
-
-        # generators are lazy; tuple() is used to force it to make all objects
-        result = tuple(views.create_queries(['Joe'], ['first_name__icontains',
-                                                      'last_name__icontains'],
-                                            Q))
-
-        expected = [mock.call(first_name__icontains='Joe'),
-                    mock.call(last_name__icontains='Joe')]
-        self.assertEquals(expected, Q.call_args_list)
-        self.assertEquals(len(result), 2)
-
-    def test_all_terms_sent(self):
-        """All terms are sent to each query."""
-        Q = mock.MagicMock()
-
-        # generators are lazy; tuple() is used to force all objects to be made
-        result = tuple(views.create_queries(['John', 'Smith'], ['a__is'], Q))
-        expected = [mock.call(a__is='John'), mock.call(a__is='Smith')]
-        self.assertEquals(expected, Q.call_args_list)
-        self.assertEquals(len(result), 2)
+    # since Q objects can't be checked for equality I'm not sure how to
+    # properly unit test this
 
 
 class OrTogetherTest(unittest.TestCase):
@@ -78,14 +60,14 @@ class OrTogetherTest(unittest.TestCase):
         """or_together()'ing one thing pairs with the empty value."""
         empty = mock.MagicMock()
         q1 = mock.MagicMock()
-        self.assertEquals(views.or_together((q1,), empty), empty | q1)
+        self.assertEquals(views.or_together((q1,)), q1)
 
     def test_multiple_queries_combined(self):
         """or_goether()'ing two things pairs both with the empty value."""
         empty = mock.MagicMock()
         q1, q2 = mock.MagicMock(), mock.MagicMock()
-        self.assertEquals(views.or_together((q1, q2), empty),
-                          empty | q1 | q2)
+        self.assertEquals(views.or_together((q1, q2)),
+                          q1 | q2)
 
 
 class AndTogetherTest(unittest.TestCase):
