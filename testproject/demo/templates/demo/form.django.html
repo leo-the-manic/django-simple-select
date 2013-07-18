@@ -59,20 +59,20 @@
 
             $(function() {
 
-                // add <input>'s to simpleselect fields
+                // add <input>s to simpleselect fields
                 $(".simpleselect").each(function() {
                     var textfieldID = $(this).attr('id') + '_text'
                     $(this).after('<input type="text" id="' + textfieldID
                                   + '" class="simpleselect-search">')
                 });
 
-                $(".simpleselect-search").autocomplete({
-                    source: '{% url "simpleselect" %}',
-
-                    // the 'select' event triggers when the user has chosen
-                    // an autocomplete suggestion
-                    select: simpleselect_updateHiddenValue
-                });
+//                $(".simpleselect-search").autocomplete({
+//                    source: '{% url "simpleselect" %}?foo=bar',
+//
+//                    // the 'select' event triggers when the user has chosen
+//                    // an autocomplete suggestion
+//                    select: simpleselect_updateHiddenValue
+//                });
 
                 // debug info; show the <input hidden> was changed
                 $(".simpleselect").change(function() {
