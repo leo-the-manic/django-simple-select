@@ -10,10 +10,12 @@ from django.utils.safestring import mark_safe
 REGISTRY = {}
 
 ACTIVATE_SCRIPT = string.Template('''
-jQuery(function() {
-    var args = jQuery.extend({ source: $url }, simpleselectDefaultArgs);
-    jQuery("#$input_id").autocomplete(args);
-});
+<script language="javascript">
+    jQuery(function() {
+        var args = jQuery.extend({ source: $url }, simpleselectDefaultArgs);
+        jQuery("#$input_id").autocomplete(args);
+    });
+</script>
 ''')
 
 
@@ -30,11 +32,20 @@ class AutocompleteSelect(django.forms.Widget):
                  js_initialization_template=ACTIVATE_SCRIPT.substitute):
         """Create a new autocompleting select widget.
 
+        :param token_generator:
+            A callable which takes the widget instance and returns a suitable
+            token. Note that the widget does not have a "field name" or
+            anything of that sort at its disposal, and this is due to the
+            architecture of the Django form system.  Defaults to the Python
+            standard library ``uuid.uuid4`` function.
+
         :type  registry: dict
-        :param registry: A map of tokens to widget instances; the widget adds
-                         itself to this registry when constructed. By default
-                         this is used in the JSON service to access the
-                         choices of this widget.
+        :param registry:
+            A map of tokens to widget instances; the widget adds itself to this
+            registry when constructed. By default this is used in the JSON
+            service to access the choices of this widget. By default, uses a
+            plain dictionary at ``simpleselect.REGISTRY``.
+            TODO: make sure this forward is setup properly
 
         :param js_initialization_template:
             A callable that produces a string which when injected into the
@@ -53,13 +64,16 @@ class AutocompleteSelect(django.forms.Widget):
         if registry is None:
             registry = REGISTRY
         registry[self.token] = self
+        self.js_generator = js_initialization_template
 
-    def render(self, name, value, attrs=None,
-               template_renderer=ACTIVATE_SCRIPT.substitute):
+    def render(self, name, value, attrs=None):
+        if attrs is None:
+            attrs = {}
         input = django.forms.HiddenInput()
         msg = mark_safe("Queryset: <code>{}</code>".format(
             django.utils.html.escape(repr(self.choices.queryset))))
         input_class = attrs.get('class', '') + " simpleselect"
         attrs['class'] = input_class
+        js = self.js_generator(input_id="id_" + name, url='http://google.com/')
 
-        return msg + input.render(name, value, attrs)
+        return msg + input.render(name, value, attrs) + mark_safe(js)
