@@ -12,76 +12,10 @@
         <script language="javascript"
             src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
+        <script language="javascript"
+            src="{% static "simpleselect/simpleselect.js" %}"></script>
+
         <script language="javascript">
-
-
-            /**
-             * Get the <input hidden> for the textbox with the given ID.
-             *
-             * textboxID should be a string.
-             *
-             * returns a DOM element
-             */
-            window.simpleselect_getHiddenInput = function(textboxID) {
-                // if you have a field foo, the textbox gets the id "foo_text"
-                var textboxTagRegex = /_text$/;
-                var fieldID = textboxID.replace(textboxTagRegex, '');
-                return $("#" + fieldID).get(0);
-            }
-
-
-            /**
-             * Set the <input type="hidden"> to match the user's selection
-             *
-             * This is called after the user has chosen an autocomplete
-             * suggestion.
-             *
-             * Args: see http://api.jqueryui.com/autocomplete/#event-select
-             *   for full detail.
-             *
-             * `this` is the <input type="text"> which the user uses to enter
-             *    their filter terms and select an option.
-             *
-             * `ui.item` is an JavaScript object, with `label` and `value`,
-             *    and `pk` attributes, representing what the user selected.
-             *    This is pulled from a remote JSON call.
-             *
-             *    The `value` is *not* used as the <input hidden> value
-             *    because jQueryUI autocomplete attemps to rewrite the textbox
-             *    with `value` if it is set. Instead a `pk` value is set, which
-             *    jQueryUI ignores.
-             */
-            window.simpleselect_updateHiddenValue = function(event, ui) {
-                var $hidden = $(simpleselect_getHiddenInput(this.id));
-                $hidden.val(ui.item.pk).trigger('change')
-            }
-
-
-            /**
-             * Defaults sent to jQueryUI.autocomplete()
-             */
-            window.simpleselect_defaultAutocompleteArgs = {
-                select: window.simpleselect_updateHiddenValue
-            };
-
-
-            /**
-             * Make a new text input to manipulate the choice ID.
-             *
-             * This does *not* actually activate jQueryUI on the input, it
-             * just creates a new <input> with an ID of `hiddenID + '_text'`.
-             * It will also have the CSS class "simpleselect-search".
-             *
-             * returns a jQuery object containing the created element.
-             */
-            window.simpleselect_$makeTextInput = function(hiddenID) {
-                var textfieldID = hiddenID + '_text'
-                var $textElem = $('<input>', {type: 'text', id: textfieldID,
-                                              "class": "simpleselect-search"});
-                $("#" + hiddenID).after($textElem);
-                return $textElem;
-            }
-
             $(function() {
                 // debug info; show the <input hidden> was changed
                 $(".simpleselect").change(function() {
@@ -89,8 +23,6 @@
                           $(this).val());
                 });
             });
-
-
         </script>
 
         <style type="text/css">

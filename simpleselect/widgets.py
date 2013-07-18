@@ -10,15 +10,11 @@ from django.utils.safestring import mark_safe
 
 REGISTRY = {}
 
-# note in this template: two dollar signs output a literal dollar sign.
-# jQuery variables get prefixed with dollar signs for clarity
+# Output after each autocomplete widget
 ACTIVATE_SCRIPT = string.Template('''
 <script language="javascript">
     jQuery(function() {
-        var $$textfield = simpleselect_$$makeTextInput("$input_id");
-        var args = $$.extend({ source: "$url" },
-                             window.simpleselect_defaultAutocompleteArgs);
-        $$textfield.autocomplete(args);
+        window.simpleselect_activateWidget("$input_id", "$url");
     });
 </script>
 ''')
