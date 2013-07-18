@@ -31,6 +31,15 @@ class JSONResponse(django.http.HttpResponse):
                                            status, reason)
 
 
+def and_together(queries):
+    """Join the given queries by ANDing.
+
+    If ``queries`` is empty, this returns None.
+
+    """
+    return reduce(lambda a, b: a & b, queries)
+
+
 def or_together(queries, empty_val=django.db.models.Q()):
     """Join the given queries together by ORing.
 
@@ -58,6 +67,9 @@ def or_together(queries, empty_val=django.db.models.Q()):
 
 def create_queries(terms, queries, query_factory):
     """Make a sequence of query objects out of terms and query strings.
+
+    Although "query objects" are assumed to be Django `Q objects`_, you can
+    use ``query_factory`` to supply whatever you like.
 
     This does a "cartesian product"; in other words, this call::
 
@@ -134,8 +146,8 @@ def query(filter_func, terms, queries, query_factory, query_factory_applier,
 def autocomplete_filter(request):
     from demo import models
     objects = query(models.Company.objects.filter,
-                    [request.GET.get('term')],
+                    request.GET.get('term', '').split(),
                     ['name__icontains'], django.db.models.Q,
-                    create_queries, or_together)
+                    create_queries, and_together)
     companies = [{'pk': c.pk, 'label': c.name} for c in objects]
     return JSONResponse(companies)
