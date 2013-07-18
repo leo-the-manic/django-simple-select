@@ -8,7 +8,9 @@ class AddEmployeeForm(forms.Form):
     """Really just a farce that lets me play with a different field."""
 
     person = forms.ModelChoiceField(models.Person.objects.all(),
-                                    widget=simpleselect.AutocompleteSelect([]))
+                                    widget=simpleselect.AutocompleteSelect(
+                                        ['first_name__icontains',
+                                         'last_name__icontains']))
 
 
 class PersonForm(forms.ModelForm):
@@ -16,5 +18,5 @@ class PersonForm(forms.ModelForm):
     class Meta:
         model = models.Person
         widgets = {
-            'company': simpleselect.AutocompleteSelect([])
+            'company': simpleselect.AutocompleteSelect(['name__icontains'])
         }
