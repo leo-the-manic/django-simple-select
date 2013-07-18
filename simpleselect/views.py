@@ -5,6 +5,8 @@ import json
 import django.db.models
 import django.http
 
+from . import widgets
+
 
 class JSONResponse(django.http.HttpResponse):
     """An HTTP response with a 'content-type: application/json' header"""
@@ -144,10 +146,16 @@ def query(filter_func, terms, queries, query_factory, query_factory_applier,
 
 
 def autocomplete_filter(request):
-    from demo import models
-    objects = query(models.Company.objects.filter,
+    field = request.GET.get('field')
+    if field not in widgets.REGISTRY:
+        raise django.http.Http404("Can't find widget {} in global registry. Keys in the registry: {}"
+                                  .format(field, widgets.REGISTRY.keys()))
+    widget = widgets.REGISTRY[field]
+    objects = query(widget.choices.queryset.filter,
                     request.GET.get('term', '').split(),
-                    ['name__icontains'], django.db.models.Q,
-                    create_queries, and_together)
+                    widget.queries,
+                    django.db.models.Q,
+                    create_queries,
+                    and_together)
     companies = [{'pk': c.pk, 'label': c.name} for c in objects]
     return JSONResponse(companies)
