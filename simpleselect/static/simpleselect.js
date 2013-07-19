@@ -65,9 +65,9 @@ window.simpleselect_updateOnChange = function(hiddenID, url) {
         var glue = url.indexOf("&") >= 0 ? "?" : "&";
         var newID = $(this).val();
         var requestURL = url + glue + "id=" + newID;
-        $.getJSON(url, null, function(data, textStatus) {
+        $.getJSON(requestURL, null, function(data, textStatus) {
             if(textStatus == "success") {
-                simpleselect_setText(hiddenID, "Success");
+                simpleselect_setText(hiddenID, data[0].label);
             } else {
                 simpleselect_setText(hiddenID, textStatus);
             }

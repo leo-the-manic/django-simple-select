@@ -16,16 +16,6 @@
         <script language="javascript"
             src="{% static "simpleselect.js" %}"></script>
 
-        <script language="javascript">
-            $(function() {
-                // debug info; show the <input hidden> was changed
-                $(".simpleselect").change(function() {
-                    alert(this + " (" + this.id + ") value is " +
-                          $(this).val());
-                });
-            });
-        </script>
-
         <style type="text/css">
             body {
                 font-family: sans-serif;
