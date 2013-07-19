@@ -113,7 +113,7 @@ Quickstart
 
 5. Add this to your template
 
-   .. code:: django
+   .. code:: html+django
 
     {% load staticfiles %}
 
