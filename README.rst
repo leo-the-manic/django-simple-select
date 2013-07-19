@@ -95,7 +95,7 @@ Quickstart
 
    .. code:: python
 
-    ``"John Smi"``
+    "John Smi"
 
    your final query is equivalent to this, built using `Django Q objects`_:
 
