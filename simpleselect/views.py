@@ -148,7 +148,11 @@ def query(filter_func, terms, queries, query_factory, query_factory_applier,
 
 
 def jsonify_queryset(qset):
-    """Get a JSONResponse which is a list of objects in qset."""
+    """Get a JSONResponse which is a list of objects in qset.
+
+    qset can actually be any iterable.
+
+    """
     objs = [{'pk': o.pk, 'label': unicode(o)} for o in qset]
     return JSONResponse(objs)
 
@@ -165,22 +169,25 @@ def do_search(widget, request):
 
 
 def get_item_detail(widget, request):
-    """Process a request for"""
+    """Process a request for one specific object by it's ID."""
+    id = request.GET['id']
+    obj = widget.choices.queryset.get(pk=id)
+    return jsonify_queryset([obj])
 
 
 def autocomplete_filter(request):
     field = request.GET.get('field')
     if field not in widgets.REGISTRY:
-        raise django.http.Http404("Can't find widget {} in global registry. Keys in the registry: {}"
+        raise django.http.Http404("Can't find widget {} in global registry."
+                                  "Keys in the registry: {}"
                                   .format(field, widgets.REGISTRY.keys()))
     widget = widgets.REGISTRY[request.GET['field']]
 
     # this is either an autosuggest search, or a query for a specific item
     # by its ID for its autocomplete data
-    if False:
-        pass
+    if request.GET.get('id'):
+        delegate = get_item_detail
     else:
         delegate = do_search
 
     return delegate(widget, request)
-
