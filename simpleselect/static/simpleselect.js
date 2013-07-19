@@ -44,6 +44,7 @@ window.simpleselect_updateHiddenValue = function(event, ui) {
  * Defaults sent to jQueryUI.autocomplete()
  */
 window.simpleselect_defaultAutocompleteArgs = {
+    autoFocus: true,
     select: window.simpleselect_updateHiddenValue
 };
 
