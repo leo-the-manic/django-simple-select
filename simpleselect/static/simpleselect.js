@@ -95,7 +95,7 @@ window.simpleselect_activateWidget = function(hiddenID, url) {
     var args = $.extend({ source: url },
                         window.simpleselect_defaultAutocompleteArgs);
     $textfield.autocomplete(args);
-    window.simpleselect_updateOnChange(hiddenID);
+    window.simpleselect_updateOnChange(hiddenID, url);
 }
 
 
