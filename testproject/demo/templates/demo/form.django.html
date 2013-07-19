@@ -31,6 +31,10 @@
                 font-family: sans-serif;
                 font-size: 10pt;
             }
+
+            .idfield {
+                width: 2em;
+            }
         </style>
     </head>
 
@@ -40,10 +44,30 @@
         <h2>Add a new Person</h1>
         <form>
             {{ form.as_p }}
+            <h3>Testing butons</h3>
+            <p>Set company ID to <input id="newcompanyid" class="idfield" value="1">: <input type="submit" id="companybutton" value="Set"></p>
+            <script language="javascript">
+                $(function() {
+                    $("#companybutton").click(function(evt) {
+                        evt.preventDefault();
+                        $("#id_company").val($("#newcompanyid").val()).trigger('change');
+                    });
+                });
+            </script>
         </form>
         <h2>Add something that has a Person field</h2>
         <form>
             {{ form2.as_p }}
+            <h3>Testing butons</h3>
+            <p>Set person ID to <input id="newpersonid" class="idfield" value="1">: <input type="submit" id="personbutton" value="Set"></p>
+            <script language="javascript">
+                $(function() {
+                    $("#personbutton").click(function(evt) {
+                        evt.preventDefault();
+                        $("#id_person").val($("#newpersonid").val()).trigger('change');
+                    });
+                });
+            </script>
         </form>
     </body>
 </html>

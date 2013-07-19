@@ -10,7 +10,7 @@ from django.utils.safestring import mark_safe
 
 REGISTRY = {}
 
-# Output after each autocomplete widget
+# This snippet is output by the widget
 ACTIVATE_SCRIPT = string.Template('''
 <script language="javascript">
     jQuery(function() {
