@@ -8,7 +8,7 @@ if 'sdist' in sys.argv:
 
 setup(
     name="django-simple-select",
-    version='0.1.8',
+    version='0.1.9',
     description='An autocompleting select widget for Django',
     author='leo-the-manic',
     author_email='manicleo@gmail.com',
