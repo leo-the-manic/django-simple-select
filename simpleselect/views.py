@@ -5,6 +5,7 @@ import json
 import django.db.models
 import django.http
 
+from . import fields
 from . import widgets
 
 
@@ -177,11 +178,11 @@ def get_item_detail(widget, request):
 
 def autocomplete_filter(request):
     field = request.GET.get('field')
-    if field not in widgets.REGISTRY:
-        raise django.http.Http404("Can't find widget {} in global registry."
-                                  "Keys in the registry: {}"
-                                  .format(field, widgets.REGISTRY.keys()))
-    widget = widgets.REGISTRY[request.GET['field']]
+    if field not in fields.REGISTRY:
+        raise django.http.Http404("Can't find field {} in global registry."
+                                  "Registered fields: {}"
+                                  .format(field, fields.REGISTRY.keys()))
+    field = fields.REGISTRY[request.GET['field']]
 
     # this is either an autosuggest search, or a query for a specific item
     # by its ID for its autocomplete data
@@ -190,4 +191,4 @@ def autocomplete_filter(request):
     else:
         delegate = do_search
 
-    return delegate(widget, request)
+    return delegate(field, request)
