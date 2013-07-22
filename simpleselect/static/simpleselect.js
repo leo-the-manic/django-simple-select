@@ -93,10 +93,16 @@ window.simpleselect_updateOnChange = function(hiddenID, url) {
  */
 window.simpleselect_activateWidget = function(hiddenID, url) {
     var $textfield = simpleselect_$makeTextInput(hiddenID);
-    var args = $.extend({ source: url },
+    var args = $.extend({source: url},
                         window.simpleselect_defaultAutocompleteArgs);
     $textfield.autocomplete(args);
     window.simpleselect_updateOnChange(hiddenID, url);
+    $hiddenElem = $("#"+hiddenID);
+
+    // if there's an initial value, load the text for it
+    if($hiddenElem.val()) {
+        $hiddenElem.trigger('change');
+    }
 }
 
 
