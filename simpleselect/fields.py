@@ -1,5 +1,3 @@
-import functools
-
 import django.db.models
 import django.forms
 
@@ -38,7 +36,11 @@ class AutoRegister(type):
 class AutoSelectField(django.forms.ModelChoiceField):
     __metaclass__ = AutoRegister
 
-    widget = widgets.AutocompleteSelect
-
     def __init__(self, *args, **kwargs):
+        if not 'widget' in kwargs:
+            widget = widgets.AutocompleteSelect(
+                queries=self.queries,
+                token_generator=lambda widget: get_qualname(type(self)))
+            widget.choices = self.data
+            kwargs['widget'] = widget
         super(AutoSelectField, self).__init__(self.data, *args, **kwargs)

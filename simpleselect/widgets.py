@@ -54,7 +54,7 @@ class AutocompleteSelect(django.forms.Widget):
 
     """
 
-    def __init__(self, attrs=None, registry=None,
+    def __init__(self, queries, attrs=None, registry=None,
                  token_generator=(lambda self: str(uuid.uuid4())),
                  json_url_maker=get_json_url_for_widget,
                  js_initialization_template=ACTIVATE_SCRIPT.substitute):
@@ -98,6 +98,7 @@ class AutocompleteSelect(django.forms.Widget):
         if registry is None:
             registry = REGISTRY
         registry[self.token] = self
+        self.queries = queries
         self.js_generator = js_initialization_template
         self.js_url_maker = json_url_maker
 

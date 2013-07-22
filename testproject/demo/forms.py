@@ -10,6 +10,8 @@ class AddEmployeeForm(forms.Form):
 
 class CompanyField(simpleselect.AutoSelectField):
 
+    queries = ['name__icontains']
+
     data = models.Company.objects.all()
 
 

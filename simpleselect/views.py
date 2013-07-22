@@ -158,21 +158,21 @@ def jsonify_queryset(qset):
     return JSONResponse(objs)
 
 
-def do_search(widget, request):
+def do_search(field, request):
     """Process an autosuggestion search."""
-    objects = query(widget.choices.queryset.filter,
+    objects = query(field.data.filter,
                     request.GET.get('term', '').split(),
-                    widget.queries,
+                    field.queries,
                     django.db.models.Q,
                     create_queries,
                     and_together)
     return jsonify_queryset(objects)
 
 
-def get_item_detail(widget, request):
+def get_item_detail(field, request):
     """Process a request for one specific object by it's ID."""
     id = request.GET['id']
-    obj = widget.choices.queryset.get(pk=id)
+    obj = field.data.get(pk=id)
     return jsonify_queryset([obj])
 
 
