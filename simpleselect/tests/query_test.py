@@ -1,6 +1,5 @@
 import unittest
-
-import mock
+from unittest import mock
 
 from .. import views
 
@@ -11,25 +10,25 @@ class JSONResponseTest(unittest.TestCase):
     def test_sets_content_type(self):
         """JSON responses have a header 'content-type: application/json'"""
         resp = views.JSONResponse()
-        self.assertEquals(resp['content-type'], 'application/json')
+        self.assertEqual(resp['content-type'], 'application/json')
 
     def test_converts_to_json(self):
         """JSON responses convert their content to JSON."""
         json = mock.MagicMock(return_value='bar')
         resp = views.JSONResponse(content='foo', json_converter=json)
         json.assert_called_with('foo')
-        self.assertEquals(resp.content, 'bar')
+        self.assertEqual(resp.content, b'bar')
 
         json = mock.MagicMock(return_value='buzz')
         resp = views.JSONResponse(content='fizz', json_converter=json)
         json.assert_called_with('fizz')
-        self.assertEquals(resp.content, 'buzz')
+        self.assertEqual(resp.content, b'buzz')
 
 
 class CreateQueriesTest(unittest.TestCase):
     """Tests for the create_queries function.
 
-    .. note:: Many of these tests use assertEquals. This is because these are
+    .. note:: Many of these tests use assertEqual. This is because these are
               MagicMock objects. Django Q objects do *NOT* have a well-defined
               __eq__ method, so if these were integration tests, they would
               all fail (even if the method logic was correct).
@@ -43,11 +42,11 @@ class CreateQueriesTest(unittest.TestCase):
         # right and is always true because of the way mock.MagicMock works
         Q = mock.MagicMock()
         queries = views.create_queries(['Joe'], ['name__icontains'], Q)
-        self.assertEquals(tuple(queries)[0], Q(name__icontains='Joe'))
+        self.assertEqual(tuple(queries)[0], Q(name__icontains='Joe'))
 
         Q = mock.MagicMock()
         queries = views.create_queries(['Ma'], ['address__contains'], Q)
-        self.assertEquals(tuple(queries)[0], Q(address__contains='Ma'))
+        self.assertEqual(tuple(queries)[0], Q(address__contains='Ma'))
 
     # since Q objects can't be checked for equality I'm not sure how to
     # properly unit test this
@@ -60,13 +59,13 @@ class OrTogetherTest(unittest.TestCase):
         """or_together()'ing one thing pairs with the empty value."""
         empty = mock.MagicMock()
         q1 = mock.MagicMock()
-        self.assertEquals(views.or_together((q1,)), q1)
+        self.assertEqual(views.or_together((q1,)), q1)
 
     def test_multiple_queries_combined(self):
         """or_goether()'ing two things pairs both with the empty value."""
         empty = mock.MagicMock()
         q1, q2 = mock.MagicMock(), mock.MagicMock()
-        self.assertEquals(views.or_together((q1, q2)),
+        self.assertEqual(views.or_together((q1, q2)),
                           q1 | q2)
 
 
@@ -82,7 +81,7 @@ class AndTogetherTest(unittest.TestCase):
         """and_together() on many queries uses the & operator to combine."""
         q1 = mock.MagicMock()
         q2 = mock.MagicMock()
-        self.assertEquals(views.and_together((q1, q2)), q1 & q2)
+        self.assertEqual(views.and_together((q1, q2)), q1 & q2)
 
 
 class QueryTest(unittest.TestCase):
@@ -113,7 +112,7 @@ class QueryTest(unittest.TestCase):
 
     def test_returns_filter_func(self):
         """The value returned from the function is from filter_func."""
-        self.assertEquals(self.result, self.datasource.return_value)
+        self.assertEqual(self.result, self.datasource.return_value)
 
     def test_filter_gets_joined_query_objects(self):
         """filter_func is given the result of query_factory_joiner."""

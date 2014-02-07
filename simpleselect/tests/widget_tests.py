@@ -1,6 +1,5 @@
 import unittest
-
-import mock
+from unittest import mock
 
 from .. import widgets
 
@@ -33,7 +32,7 @@ class AutocompleteSelectTest(unittest.TestCase):
         """The JS renderer is called with a URL sent from a URL generator."""
 
         def js_template(input_id, url):
-            self.assertEquals(url, "foo")
+            self.assertEqual(url, "foo")
 
         def url_gen(widget):
             return 'foo'
