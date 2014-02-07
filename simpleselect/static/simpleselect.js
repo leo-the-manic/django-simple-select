@@ -124,3 +124,11 @@ window.simpleselect_$makeTextInput = function(hiddenID) {
     $("#" + hiddenID).after($textElem);
     return $textElem;
 }
+
+if(jQuery) {
+    jQuery(document).ready(function() {
+        jQuery.each(window.SIMPLESELECT_ACTIVATORS, function(i, activator) {
+            activator();
+        });
+    });
+}

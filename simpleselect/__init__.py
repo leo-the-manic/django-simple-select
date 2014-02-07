@@ -1,3 +1,7 @@
-from widgets import AutocompleteSelect
+"""simpleselect -- an AJAX <select> replacement."""
 
-from fields import AutoSelectField
+from .widgets import AutocompleteSelect
+
+from .fields import AutoSelectField
+
+__all__ = ['AutocompleteSelect', 'AutoSelectField']

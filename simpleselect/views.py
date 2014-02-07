@@ -1,12 +1,11 @@
 # Create your views here.
-import itertools
 import json
+from functools import reduce
 
 import django.db.models
 import django.http
 
 from . import fields
-from . import widgets
 
 
 class JSONResponse(django.http.HttpResponse):
@@ -154,7 +153,7 @@ def jsonify_queryset(qset):
     qset can actually be any iterable.
 
     """
-    objs = [{'pk': o.pk, 'label': unicode(o)} for o in qset]
+    objs = [{'pk': o.pk, 'label': str(o)} for o in qset]
     return JSONResponse(objs)
 
 

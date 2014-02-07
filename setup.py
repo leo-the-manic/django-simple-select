@@ -1,7 +1,9 @@
-from distutils.core import setup
+import os
+import shutil
+import sys
+from setuptools import setup
 
 # copy README.rst to README; Github needs .rst, PyPI needs bare
-import sys, os, shutil
 if 'sdist' in sys.argv:
     readme = os.path.join(os.path.dirname(__file__), "README.rst")
     shutil.copyfile(readme, os.path.splitext(readme)[0])

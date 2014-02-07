@@ -12,8 +12,11 @@ REGISTRY = {}
 
 # This snippet is output by the widget
 ACTIVATE_SCRIPT = string.Template('''
-<script language="javascript">
-    jQuery(function() {
+<script type="text/javascript">
+    if(!window.SIMPLESELECT_ACTIVATORS) {
+        window.SIMPLESELECT_ACTIVATORS = [];
+    }
+    window.SIMPLESELECT_ACTIVATORS.push(function() {
         window.simpleselect_activateWidget("$input_id", "$url");
     });
 </script>
@@ -93,7 +96,7 @@ class AutocompleteSelect(django.forms.Widget):
             suggestions.
 
         """
-        super(AutocompleteSelect, self).__init__(attrs=attrs)
+        super().__init__(attrs=attrs)
         self.token = token_generator(self)
         if registry is None:
             registry = REGISTRY
