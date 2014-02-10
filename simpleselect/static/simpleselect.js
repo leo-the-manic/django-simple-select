@@ -16,7 +16,10 @@ var SimpleSelect = (function($) {
 
 
     /**
-     * Set the value of an <input hidden> when the user picks an option.
+     * Update <input hidden>'s value to match the selected text option.
+     *
+     * The <input hidden> is generally a database ID, and the user gets to
+     * choose text labels that have a 1-to-1 correspondence with database IDs.
      *
      * This is called after the user has chosen an autocomplete
      * suggestion.
@@ -27,12 +30,14 @@ var SimpleSelect = (function($) {
      * `this` is the <input type="text"> which the user uses to enter
      *    their filter terms and select an option.
      *
+     * `ui` is an object with an `item` attribute that's of interest.
+     *
      * `ui.item` is an JavaScript object, with `label` and `value`,
      *    and `pk` attributes, representing what the user selected.
      *    This is pulled from a remote JSON call.
      *
      *    The `value` is *not* used as the <input hidden> value
-     *    because jQueryUI autocomplete attemps to rewrite the textbox
+     *    because jQueryUI autocomplete attempts to rewrite the textbox
      *    with `value` if it is set. Instead a `pk` value is set, which
      *    jQueryUI ignores.
      */
@@ -43,34 +48,52 @@ var SimpleSelect = (function($) {
 
 
     /**
-     * Defaults sent to jQueryUI.autocomplete()
+     * Change the display widget to show dataItem.
+     *
+     * Rather than take the display widget, this function takes the display
+     * widget's corresponding <input hidden> ID.
+     *
+     * dataItem is an Javascript data object (populated based on a remote JSON
+     * request)
      */
-    var defaultAutocompleteArgs = {
-        autoFocus: true,
-        select: updateHiddenValue
-    };
-
-
-    /**
-     * Set the value of the textbox that controls the given hidden field
-     */
-    function setText(hiddenID, text) {
+    function setText(hiddenID, dataItem) {
         var $textbox = $("#" + hiddenID + "_text");
-        $textbox.val(text);
+        var $selectize = $textbox[0].selectize;
+
+        // selectize hides the <input text> behind a custom overlay.
+        // The overlays only show option items that selectize gets from its
+        // sources. In order to set the display from code, first the option
+        // has to exist, then the display has to be set to that option
+
+        // creates an option, or if the option already exists, does nothing
+        $selectize.addOption(text);
+
+        $selectize.setValue(text.pk);  // updates the label
     }
 
 
     /**
-     * Listen to hidden events on the input and activate the text accordingly.
+     * Update the UI widget to show the current <input hidden> value.
+     *
+     * hiddenID is the HTML 'id' attribute of the <input hidden> to show.
+     * The UI widget to update is automatically selected based on hiddenID.
+     *
+     * The url parameter should point to a service that can give a label for a
+     * specified ID. The query parameter `id` is added to the string and then
+     * a get request is sent.
      */
     function updateOnChange(hiddenID, url) {
         $("#"+hiddenID).change(function() {
+
+            // add the 'id' querystring parameter
             var glue = url.indexOf("&") >= 0 ? "?" : "&";
             var newID = $(this).val();
             var requestURL = url + glue + "id=" + newID;
+
+            // request text for the new ID
             $.getJSON(requestURL, null, function(data, textStatus) {
                 if(textStatus === "success") {
-                    setText(hiddenID, data[0].label);
+                    setText(hiddenID, data[0]);
                 } else {
                     setText(hiddenID, textStatus);
                 }
@@ -100,7 +123,7 @@ var SimpleSelect = (function($) {
 
 
     /**
-     * Inject an autcompleting textbox next to an <input hidden>
+     * Inject an autocompleting textbox next to an <input hidden>
      *
      * This is meant to be called by JS code that is put in the
      * template automatically by the Python AutocompleteWidget class.
@@ -115,9 +138,27 @@ var SimpleSelect = (function($) {
     return {
         activateWidget: function(hiddenID, url) {
             var $textfield = $makeTextInput(hiddenID);
-            var args = $.extend({source: url},
-                                defaultAutocompleteArgs);
-            $textfield.autocomplete(args);
+            $textfield.selectize({
+                valueField: 'pk',
+                labelField: 'label',
+                searchField: 'label',
+                create: false,
+                maxItems: 1,
+                load: function(query, callback) {
+                    if(!query.length) return callback;
+                    $.ajax({
+                        url: url + "&term=" + encodeURIComponent(query),
+                        type: 'GET',
+                        error: function() {
+                            callback();
+                        },
+                        success: function(res) {
+                            callback(res);
+                        }
+                    })
+                }
+            });
+
             updateOnChange(hiddenID, url);
             var $hiddenElem = $("#"+hiddenID);
 

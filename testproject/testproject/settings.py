@@ -1,4 +1,18 @@
 # Django settings for testproject project.
+import os.path
+
+
+PROJECT_DIR = os.path.realpath(os.path.join(__file__, os.pardir))
+
+
+BOWER_COMPONENTS_ROOT = PROJECT_DIR
+
+
+BOWER_INSTALLED_APPS = (
+    "bootstrap",
+    "selectize",
+)
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -72,8 +86,9 @@ STATICFILES_DIRS = (
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'djangobower.finders.BowerFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -120,6 +135,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 
+    'djangobower',
     'django_nose',  # unit testing library
 
     'demo',
