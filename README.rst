@@ -1,40 +1,42 @@
 django-simple-select
 ====================
 
-.. warning:: This is early early early alpha status. Not tested for... well...
-             much of anything. Use at your own risk. API subject to change.
+.. warning:: This is early early early alpha status. API is unstable and it's
+             not extensively tested.
 
 A simple jQueryUI autocomplete <select> replacement for Django.
 
-This project is meant to be a dead simple drop-in replacement for the
-Select widget when you have too many objects to sensibly use it.
+This project is meant to be an easy replacement for the Select widget when
+you have too many objects to sensibly use it.
+
+Requirements
+------------
+- jQuery
+
+- Twitter Bootstrap
+
+- selectize
 
 Features
 --------
 
 Good "does nots":
 
-- Doesn't apply styling except on the autocomplete popup list. You get a bare
-  text input widget to work with.
-
 - Doesn't require any SQL tables.
-
-- Doesn't require any subclassing to use.
 
 - Doesn't change your POSTdata.
 
 Not-strictly-good "does nots":
 
-- Doesn't look pretty (again, it is focused on having as little styling as
-  possible so you can tailor it for your look and feel)
-
-- Doesn't have any MultiSelect functionality (and at this point there are no
-  plans for it)
-
 - Doesn't have any API documentation (yet!)
 
 This is in extremely early alpha status; I've only put it on PyPI for the sake
 of the project I've created for.
+
+Originally there was an intention to have this be a lightweight dependency
+(i.e. require not much beyond jQuery), but I've nixed that in favor of me
+writing lightweight code. So this at the moment has a hard dependency on both
+ Twitter Bootstrap and the selectize library.
 
 Quickstart
 ----------
@@ -57,6 +59,10 @@ Quickstart
 
 4. In your form, make use of a ``simpleselect.AutocompleteSelect`` in a
    ``ModelChoiceField``, e.g.
+
+   .. warning:: This whole step is out of date. From this point on this
+                documentation is unreliable. Hopefully I will come back and
+                update these docs on my own time.
 
    .. code:: python
 
