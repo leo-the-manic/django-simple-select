@@ -80,34 +80,6 @@ var SimpleSelect = (function($) {
 
 
     /**
-     * Inject an autcompleting textbox next to an <input hidden>
-     *
-     * This is meant to be called by JS code that is put in the
-     * template automatically by the Python AutocompleteWidget class.
-     *
-     * Parameters
-     * hiddenID (string): the ID of a hidden input
-     * url (string): a service that gives autocomplete suggestions for
-     *               this field
-     *
-     * Doesn't return anything.
-     */
-    function activateWidget(hiddenID, url) {
-        var $textfield = $makeTextInput(hiddenID);
-        var args = $.extend({source: url},
-                            defaultAutocompleteArgs);
-        $textfield.autocomplete(args);
-        updateOnChange(hiddenID, url);
-        var $hiddenElem = $("#"+hiddenID);
-
-        // if there's an initial value, load the text for it
-        if($hiddenElem.val()) {
-            $hiddenElem.trigger('change');
-        }
-    }
-
-
-    /**
      * Make a new text input to manipulate the choice ID.
      *
      * This does *not* actually activate jQueryUI on the input, it
@@ -126,21 +98,42 @@ var SimpleSelect = (function($) {
         return $textElem;
     }
 
-    return {
 
-        /**
-         * Turn raw <input hidden>s into SimpleSelect-enabled text fields.
-         */
-        activate: function(activators) {
-            $.each(activators, function(i, activator) {
-                activator();
-            });
+    /**
+     * Inject an autcompleting textbox next to an <input hidden>
+     *
+     * This is meant to be called by JS code that is put in the
+     * template automatically by the Python AutocompleteWidget class.
+     *
+     * Parameters
+     * hiddenID (string): the ID of a hidden input
+     * url (string): a service that gives autocomplete suggestions for
+     *               this field
+     *
+     * Doesn't return anything.
+     */
+    return {
+        activateWidget: function(hiddenID, url) {
+            var $textfield = $makeTextInput(hiddenID);
+            var args = $.extend({source: url},
+                                defaultAutocompleteArgs);
+            $textfield.autocomplete(args);
+            updateOnChange(hiddenID, url);
+            var $hiddenElem = $("#"+hiddenID);
+
+            // if there's an initial value, load the text for it
+            if($hiddenElem.val()) {
+                $hiddenElem.trigger('change');
+            }
         }
     }
 
 })(jQuery);
 
 
-jQuery(document).ready(function() {
-    SimpleSelect.activate(SIMPLESELECT_ACTIVATORS);
+jQuery(function() {
+   window.SIMPLESELECT_ACTIVATORS = window.SIMPLESELECT_ACTIVATORS || [];
+   jQuery.each(window.SIMPLESELECT_ACTIVATORS, function(i, activator) {
+       activator();
+   });
 });

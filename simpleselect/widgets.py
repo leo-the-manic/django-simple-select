@@ -13,11 +13,10 @@ REGISTRY = {}
 # This snippet is output by the widget
 ACTIVATE_SCRIPT = string.Template('''
 <script type="text/javascript">
-    if(!window.SIMPLESELECT_ACTIVATORS) {
-        window.SIMPLESELECT_ACTIVATORS = [];
-    }
+    window.SIMPLESELECT_ACTIVATORS = window.SIMPLESELECT_ACTIVATORS || [];
+
     window.SIMPLESELECT_ACTIVATORS.push(function() {
-        window.simpleselect_activateWidget("$input_id", "$url");
+        SimpleSelect.activateWidget("$input_id", "$url");
     });
 </script>
 ''')
@@ -25,10 +24,10 @@ ACTIVATE_SCRIPT = string.Template('''
 
 def get_json_url_for_widget(widget_instance,
                             urllookup=django.core.urlresolvers.reverse):
-    """Get a URL that can provide autocomplete suggestions for the widget.
+    """Get the URL that provides autocomplete suggestions for a widget.
 
-    :type  widget: AutocompleteSelect instance
-    :param widget: The widget to provide autocompletion for
+    :type  widget_instance: AutocompleteSelect
+    :param widget_instance: The autocomplete widget.
 
     :type  urllookup: callable
     :param urllookup:
