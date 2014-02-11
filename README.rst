@@ -36,7 +36,7 @@ of the project I've created for.
 Originally there was an intention to have this be a lightweight dependency
 (i.e. require not much beyond jQuery), but I've nixed that in favor of me
 writing lightweight code. So this at the moment has a hard dependency on both
- Twitter Bootstrap and the selectize library.
+Twitter Bootstrap and the selectize library.
 
 Quickstart
 ----------
@@ -46,8 +46,8 @@ Quickstart
    ``settings.py``.
 
    .. note:: This is only for the sake of being able to include the JS file. It
-            may be possible to remove this step, so it may vanish from a
-            future version.
+             may be possible to remove this step, so it may vanish from a
+             future version.
 
 3. Add this to your ``urls.py``
 
