@@ -1,5 +1,5 @@
 Django==1.5.1
-PyYAML==3.10
+PyYAML==5.4
 django-bower==4.8.1
 django-nose==1.2
 -e git+https://github.com/leo-the-manic/django-simple-select.git@af06f35b74f921b5930f1e7bbebe92dee8ad4c09#egg=django_simple_select-master
