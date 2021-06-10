@@ -1,4 +1,4 @@
-Django==1.5.1
+Django==2.2.24
 PyYAML==3.10
 django-bower==4.8.1
 django-nose==1.2
